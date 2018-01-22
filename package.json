@@ -8,6 +8,7 @@
     "@types/three": "^0.89.3",
     "npm-run-all": "^4.1.2",
     "three": "^0.89.0",
+    "three-orbit-controls": "^82.1.0",
     "typescript": "^2.6.2",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1"
