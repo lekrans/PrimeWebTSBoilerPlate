@@ -78,8 +78,10 @@ const OrbitControl = __WEBPACK_IMPORTED_MODULE_1_three_orbit_controls___default(
 const gui = new dat.GUI();
 function init() {
     const scene = new __WEBPACK_IMPORTED_MODULE_0_three__["Scene"]();
+    const clock = new __WEBPACK_IMPORTED_MODULE_0_three__["Clock"]();
     // BOX
-    const boxGrid = getBoxGrid(10, 1.5);
+    const boxGrid = getBoxGrid(20, 0.75);
+    boxGrid.name = 'boxGrid';
     // PLANE
     const plane = getPlane(20);
     plane.name = 'plane-1'; // naming of objects
@@ -92,12 +94,12 @@ function init() {
     pointLight.intensity = 3;
     const spotLight = getSpotLight(1);
     spotLight.position.y = 2; // move the light away from (0,0)
-    spotLight.name = 'spotlight1';
+    spotLight.name = 'spotlight2';
     const sphereSpot = getSphere(0.15);
     spotLight.intensity = 3;
     const directionalLight = getDirectionalLight(1);
     directionalLight.position.y = 2; // move the light away from (0,0)
-    directionalLight.name = 'spotlight1';
+    directionalLight.name = 'spotlights';
     const sphereDirectional = getSphere(0.15);
     directionalLight.intensity = 3;
     const helper = new __WEBPACK_IMPORTED_MODULE_0_three__["CameraHelper"](directionalLight.shadow.camera);
@@ -110,27 +112,42 @@ function init() {
     pointLight.add(sphere); // add a sphere to the light to be able to see the lights position
     spotLight.add(sphereSpot); // add a sphere to the light to be able to see the lights position
     scene.add(helper);
+    gui.remember(pointLight);
+    gui.remember(pointLight.position);
     const pointLightFolder = gui.addFolder('PointLight');
     pointLightFolder.add(pointLight, 'intensity', 0, 10);
-    pointLightFolder.add(pointLight.position, 'y', 0, 5).name('PointLight.position.x');
+    pointLightFolder.add(pointLight.position, 'y', 0, 5);
     pointLightFolder.add(pointLight.position, 'x', 0, 5);
     pointLightFolder.add(pointLight.position, 'z', 0, 5);
     pointLightFolder.add(pointLight, 'visible');
+    gui.remember(pointLight.visible);
+    gui.remember(spotLight);
+    gui.remember(spotLight.position);
+    gui.remember(spotLight.shadow);
+    gui.remember(spotLight.shadow.mapSize);
     const spotLightFolder = gui.addFolder('SpotLight');
     spotLightFolder.add(spotLight, 'intensity', 0, 5);
-    spotLightFolder.add(spotLight.position, 'x', 0, 5);
+    spotLightFolder.add(spotLight.position, 'x', 0, 10);
     spotLightFolder.add(spotLight.position, 'y', 0, 5);
     spotLightFolder.add(spotLight.position, 'z', 0, 5);
+    spotLightFolder.add(spotLight, 'penumbra', 0, 5);
     spotLightFolder.add(spotLight.shadow, 'bias', 0.001, 0.1); // removes the artifact around the edges on the boxes
     spotLightFolder.add(spotLight.shadow.mapSize, 'width', 0, 40096, 1024); // removes the artifact around the edges on the boxes
     spotLightFolder.add(spotLight.shadow.mapSize, 'height', 0, 40096, 1024); // removes the artifact around the edges on the boxes
     spotLightFolder.add(spotLight, 'visible', 0, 5);
+    gui.remember(directionalLight);
+    gui.remember(directionalLight.position);
+    gui.remember(directionalLight.shadow.camera);
     const directionalLightFolder = gui.addFolder('DirectionalLight');
     directionalLightFolder.add(directionalLight, 'intensity', 0, 5);
     directionalLightFolder.add(directionalLight.position, 'x', 0, 5);
     directionalLightFolder.add(directionalLight.position, 'y', 0, 5);
     directionalLightFolder.add(directionalLight.position, 'z', 0, 5);
-    directionalLightFolder.add(spotLight, 'visible', 0, 5);
+    directionalLightFolder.add(directionalLight.shadow.camera, 'top', 5, 20);
+    directionalLightFolder.add(directionalLight.shadow.camera, 'bottom', -20, -5).name('cam bottom');
+    directionalLightFolder.add(directionalLight.shadow.camera, 'right', 5, 20).name('cam right');
+    directionalLightFolder.add(directionalLight.shadow.camera, 'left', -20, -5).name('cam left');
+    directionalLightFolder.add(directionalLight, 'visible', 0, 5);
     // initialize the box
     //box.rotation.y = 50; box.rotation.x = 150; box.rotation.z = 50;
     const camera = new __WEBPACK_IMPORTED_MODULE_0_three__["PerspectiveCamera"](45, window.innerWidth / window.innerHeight, 1, 1000);
@@ -146,7 +163,7 @@ function init() {
     document.getElementById('webgl').appendChild(renderer.domElement);
     const controls = new OrbitControl(camera, renderer.domElement);
     //
-    update(renderer, scene, camera);
+    update(renderer, scene, camera, clock);
 }
 function getBox(w, h, d) {
     const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](w, h, d);
@@ -159,13 +176,14 @@ function getBox(w, h, d) {
 }
 function getBoxGrid(amount, separationMultiplier) {
     const group = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
+    const boxSize = separationMultiplier / 1.2;
     for (let i = 0; i < amount; i++) {
-        let obj = getBox(1, 1, 1);
+        let obj = getBox(boxSize, boxSize, boxSize);
         obj.position.x = i * separationMultiplier;
         obj.position.y = obj.geometry.parameters.height / 2;
         group.add(obj);
         for (let j = 1; j < amount; j++) {
-            let obj = getBox(1, 1, 1);
+            let obj = getBox(boxSize, boxSize, boxSize);
             obj.position.x = i * separationMultiplier;
             obj.position.y = obj.geometry.parameters.height / 2;
             obj.position.z = j * separationMultiplier;
@@ -207,11 +225,20 @@ function getSpotLight(intensity) {
 function getDirectionalLight(intensity) {
     const light = new __WEBPACK_IMPORTED_MODULE_0_three__["DirectionalLight"](0xffffff, intensity);
     light.castShadow = true;
+    light.shadow.camera.top = 10; //adjust the size of the camera so we get all the shadows
+    light.shadow.camera.right = 10;
+    light.shadow.camera.left = -10;
+    light.shadow.camera.bottom = -10;
     return light;
 }
-function update(renderer, scene, camera) {
+function update(renderer, scene, camera, clock) {
     renderer.render(scene, camera);
-    const pLight = scene.getObjectByName('pointLight1');
+    let timeElapsed = clock.getElapsedTime();
+    scene.getChildByName('boxGrid').children.forEach((child, index) => {
+        child.scale.y = ((Math.sin(timeElapsed * 4 + index) + 1) / 2) + 0.001;
+        child.position.y = child.scale.y / 2;
+    });
+    //const pLight = scene.getObjectByName('pointLight1');
     //  pLight.position.x += 0.01;
     //  pLight.position.y -= 0.01;
     //  pLight.position.z += 0.01;
@@ -222,7 +249,7 @@ function update(renderer, scene, camera) {
     //   child.scale.x += 0.001;
     // })
     requestAnimationFrame(() => {
-        update(renderer, scene, camera);
+        update(renderer, scene, camera, clock);
     });
 }
 init();
