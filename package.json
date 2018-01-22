@@ -1,0 +1,30 @@
+{
+  "name": "begin",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/three": "^0.89.3",
+    "npm-run-all": "^4.1.2",
+    "typescript": "^2.6.2",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "scripts": {
+    "start": "npm-run-all --parallel devserver build:typescript build:bundle",
+    "devserver": "webpack-dev-server",
+    "build:typescript": "tsc -w",
+    "build:bundle": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lekrans/PrimeWebTSBoilerPlate.git"
+  },
+  "author": "Michael Lekrans",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lekrans/PrimeWebTSBoilerPlate/issues"
+  },
+  "homepage": "https://github.com/lekrans/PrimeWebTSBoilerPlate#readme"
+}
