@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import OrbitControlsfunc from 'three-orbit-controls';
+import { DirectionalLight } from 'three';
 const OrbitControl = OrbitControlsfunc(THREE);
 
 
@@ -16,6 +17,7 @@ const boxGrid = getBoxGrid(10, 1.5)
  plane.name = 'plane-1';  // naming of objects
  plane.rotation.x = Math.PI/2; // 90 degrees in radiants
 
+
  // LIGHT
  const pointLight = getPointLight(1);
  pointLight.position.y = 2; // move the light away from (0,0)
@@ -23,17 +25,56 @@ const boxGrid = getBoxGrid(10, 1.5)
  const sphere = getSphere(0.15);
  pointLight.intensity = 3;
 
+ const spotLight = getSpotLight(1);
+ spotLight.position.y = 2; // move the light away from (0,0)
+ spotLight.name = 'spotlight1';
+ const sphereSpot = getSphere(0.15);
+ spotLight.intensity = 3;
+
+ const directionalLight = getDirectionalLight(1);
+ directionalLight.position.y = 2; // move the light away from (0,0)
+ directionalLight.name = 'spotlight1';
+ const sphereDirectional = getSphere(0.15);
+ directionalLight.intensity = 3;
+
+ const helper = new THREE.CameraHelper(directionalLight.shadow.camera);
 
  // ADD TO SCENE
  scene.add(plane);
  scene.add(pointLight)
+ scene.add(spotLight)
+ scene.add(directionalLight)
  scene.add(boxGrid);
  pointLight.add(sphere);  // add a sphere to the light to be able to see the lights position
+ spotLight.add(sphereSpot);  // add a sphere to the light to be able to see the lights position
+ scene.add(helper);
 
- gui.add(pointLight, 'intensity', 0, 10);
- gui.add(pointLight.position, 'y', 0,5);
- gui.add(pointLight.position, 'x', 0,5);
- gui.add(pointLight.position, 'z', 0,5);
+ const pointLightFolder = gui.addFolder('PointLight');
+ pointLightFolder.add(pointLight, 'intensity', 0, 10);
+ pointLightFolder.add(pointLight.position, 'y', 0,5).name('PointLight.position.x');
+ pointLightFolder.add(pointLight.position, 'x', 0,5);
+ pointLightFolder.add(pointLight.position, 'z', 0,5);
+ pointLightFolder.add(pointLight, 'visible');
+
+ const spotLightFolder = gui.addFolder('SpotLight');
+ spotLightFolder.add(spotLight, 'intensity', 0, 5);
+ spotLightFolder.add(spotLight.position, 'x', 0, 5);
+ spotLightFolder.add(spotLight.position, 'y', 0, 5);
+ spotLightFolder.add(spotLight.position, 'z', 0, 5);
+ spotLightFolder.add(spotLight.shadow, 'bias', 0.001, 0.1); // removes the artifact around the edges on the boxes
+ spotLightFolder.add(spotLight.shadow.mapSize, 'width', 0, 40096, 1024); // removes the artifact around the edges on the boxes
+ spotLightFolder.add(spotLight.shadow.mapSize, 'height', 0, 40096, 1024); // removes the artifact around the edges on the boxes
+ spotLightFolder.add(spotLight, 'visible', 0, 5);
+
+
+ const directionalLightFolder = gui.addFolder('DirectionalLight');
+ directionalLightFolder.add(directionalLight, 'intensity', 0, 5);
+ directionalLightFolder.add(directionalLight.position, 'x', 0, 5);
+ directionalLightFolder.add(directionalLight.position, 'y', 0, 5);
+ directionalLightFolder.add(directionalLight.position, 'z', 0, 5);
+
+
+ directionalLightFolder.add(spotLight, 'visible', 0, 5);
 
 
 
@@ -137,6 +178,22 @@ function getPointLight(intensity: number) {
 
  return light;
 }
+
+function getSpotLight(intensity: number) {
+ const light = new THREE.SpotLight(0xffffff, intensity);
+ light.castShadow = true;
+
+ return light;
+}
+
+
+function getDirectionalLight(intensity: number) {
+ const light = new THREE.DirectionalLight(0xffffff, intensity);
+ light.castShadow = true;
+
+ return light;
+}
+
 
 function update(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
  renderer.render(
