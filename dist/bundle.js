@@ -150,18 +150,23 @@ function init() {
     directionalLightFolder.add(directionalLight, 'visible', 0, 5);
     // initialize the box
     //box.rotation.y = 50; box.rotation.x = 150; box.rotation.z = 50;
-    const camera = new __WEBPACK_IMPORTED_MODULE_0_three__["PerspectiveCamera"](45, window.innerWidth / window.innerHeight, 1, 1000);
+    const perspectiveCamera = new __WEBPACK_IMPORTED_MODULE_0_three__["PerspectiveCamera"](45, window.innerWidth / window.innerHeight, 1, 1000);
     // Camera
-    camera.position.x = 1;
-    camera.position.y = 2;
-    camera.position.z = 5;
-    camera.lookAt(new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0));
+    perspectiveCamera.position.x = 1;
+    perspectiveCamera.position.y = 2;
+    perspectiveCamera.position.z = 5;
+    perspectiveCamera.lookAt(new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0));
+    const orthoCamera = new __WEBPACK_IMPORTED_MODULE_0_three__["OrthographicCamera"](-15, 15, 15, -15);
+    let camera = perspectiveCamera;
+    let CameraConfig = function () {
+        this.perspective = 'perspective';
+    };
     // Renderer
     const renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["WebGLRenderer"]();
     renderer.shadowMap.enabled = true;
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('webgl').appendChild(renderer.domElement);
-    const controls = new OrbitControl(camera, renderer.domElement);
+    let controls = new OrbitControl(camera, renderer.domElement);
     //
     update(renderer, scene, camera, clock);
 }

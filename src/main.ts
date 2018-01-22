@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import OrbitControlsfunc from 'three-orbit-controls';
-import { DirectionalLight, Clock } from 'three';
+import { DirectionalLight, Clock, PerspectiveCamera, OrthographicCamera } from 'three';
 const OrbitControl = OrbitControlsfunc(THREE);
 
 
@@ -50,6 +50,7 @@ boxGrid.name = 'boxGrid';
  spotLight.add(sphereSpot);  // add a sphere to the light to be able to see the lights position
  scene.add(helper);
 
+
  gui.remember(pointLight);
  gui.remember(pointLight.position);
  const pointLightFolder = gui.addFolder('PointLight');
@@ -95,27 +96,35 @@ gui.remember(directionalLight.shadow.camera);
  // initialize the box
  //box.rotation.y = 50; box.rotation.x = 150; box.rotation.z = 50;
 
- const camera = new THREE.PerspectiveCamera(
+ const perspectiveCamera = new THREE.PerspectiveCamera(
    45,
    window.innerWidth/window.innerHeight,
    1,
    1000
  );
  // Camera
- camera.position.x = 1;
- camera.position.y = 2;
- camera.position.z = 5;
- camera.lookAt(new THREE.Vector3(0,0,0));
+ perspectiveCamera.position.x = 1;
+ perspectiveCamera.position.y = 2;
+ perspectiveCamera.position.z = 5;
+ perspectiveCamera.lookAt(new THREE.Vector3(0,0,0));
+
+ const orthoCamera = new THREE.OrthographicCamera(-15,15,15,-15);
 
 
+let camera: PerspectiveCamera | OrthographicCamera = perspectiveCamera;
 
- // Renderer
+
+  let CameraConfig = function() {
+    this.perspective = 'perspective';
+  }
+
+  // Renderer
  const renderer = new THREE.WebGLRenderer();
  renderer.shadowMap.enabled = true;
  renderer.setSize(window.innerWidth, window.innerHeight);
  document.getElementById('webgl').appendChild(renderer.domElement);
 
- const controls = new OrbitControl(camera, renderer.domElement);
+ let controls = new OrbitControl(camera, renderer.domElement);
  //
  update(renderer, scene, camera, clock);
 }
