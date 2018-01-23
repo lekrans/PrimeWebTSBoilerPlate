@@ -70,37 +70,39 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_three_orbit_controls__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_three_orbit_controls___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_three_orbit_controls__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__geometry__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lights__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_three_orbit_controls__);
 
 
-const OrbitControl = __WEBPACK_IMPORTED_MODULE_1_three_orbit_controls___default()(__WEBPACK_IMPORTED_MODULE_0_three__);
+
+
+const OrbitControl = __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls___default()(__WEBPACK_IMPORTED_MODULE_0_three__);
 const gui = new dat.GUI();
 function init() {
     const scene = new __WEBPACK_IMPORTED_MODULE_0_three__["Scene"]();
     const clock = new __WEBPACK_IMPORTED_MODULE_0_three__["Clock"]();
     // BOX
-    const boxGrid = getBoxGrid(20, 0.75);
+    const boxGrid = __WEBPACK_IMPORTED_MODULE_1__geometry__["a" /* getBoxGrid */](20, 0.75);
     boxGrid.name = 'boxGrid';
     // PLANE
-    const plane = getPlane(20);
+    const plane = __WEBPACK_IMPORTED_MODULE_1__geometry__["b" /* getPlane */](20);
     plane.name = 'plane-1'; // naming of objects
     plane.rotation.x = Math.PI / 2; // 90 degrees in radiants
     // LIGHT
-    const pointLight = getPointLight(1);
+    const pointLight = __WEBPACK_IMPORTED_MODULE_2__lights__["b" /* getPointLight */](1);
     pointLight.position.y = 2; // move the light away from (0,0)
     pointLight.name = 'pointLight1';
-    const sphere = getSphere(0.15);
     pointLight.intensity = 3;
-    const spotLight = getSpotLight(1);
+    const spotLight = __WEBPACK_IMPORTED_MODULE_2__lights__["c" /* getSpotLight */](1);
     spotLight.position.y = 2; // move the light away from (0,0)
     spotLight.name = 'spotlight2';
-    const sphereSpot = getSphere(0.15);
     spotLight.intensity = 3;
-    const directionalLight = getDirectionalLight(1);
+    const directionalLight = __WEBPACK_IMPORTED_MODULE_2__lights__["a" /* getDirectionalLight */](1);
     directionalLight.position.y = 2; // move the light away from (0,0)
     directionalLight.name = 'spotlights';
-    const sphereDirectional = getSphere(0.15);
+    // const sphereDirectional = GEOMETRY.getSphere(0.15);
     directionalLight.intensity = 3;
     const helper = new __WEBPACK_IMPORTED_MODULE_0_three__["CameraHelper"](directionalLight.shadow.camera);
     // ADD TO SCENE
@@ -109,18 +111,16 @@ function init() {
     scene.add(spotLight);
     scene.add(directionalLight);
     scene.add(boxGrid);
-    pointLight.add(sphere); // add a sphere to the light to be able to see the lights position
-    spotLight.add(sphereSpot); // add a sphere to the light to be able to see the lights position
     scene.add(helper);
     gui.remember(pointLight);
     gui.remember(pointLight.position);
+    gui.remember(pointLight.visible);
     const pointLightFolder = gui.addFolder('PointLight');
     pointLightFolder.add(pointLight, 'intensity', 0, 10);
     pointLightFolder.add(pointLight.position, 'y', 0, 5);
     pointLightFolder.add(pointLight.position, 'x', 0, 5);
     pointLightFolder.add(pointLight.position, 'z', 0, 5);
     pointLightFolder.add(pointLight, 'visible');
-    gui.remember(pointLight.visible);
     gui.remember(spotLight);
     gui.remember(spotLight.position);
     gui.remember(spotLight.shadow);
@@ -170,76 +170,10 @@ function init() {
     //
     update(renderer, scene, camera, clock);
 }
-function getBox(w, h, d) {
-    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](w, h, d);
-    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
-        color: "rgb(120,120,120)"
-    });
-    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
-    mesh.castShadow = true;
-    return mesh;
-}
-function getBoxGrid(amount, separationMultiplier) {
-    const group = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
-    const boxSize = separationMultiplier / 1.2;
-    for (let i = 0; i < amount; i++) {
-        let obj = getBox(boxSize, boxSize, boxSize);
-        obj.position.x = i * separationMultiplier;
-        obj.position.y = obj.geometry.parameters.height / 2;
-        group.add(obj);
-        for (let j = 1; j < amount; j++) {
-            let obj = getBox(boxSize, boxSize, boxSize);
-            obj.position.x = i * separationMultiplier;
-            obj.position.y = obj.geometry.parameters.height / 2;
-            obj.position.z = j * separationMultiplier;
-            group.add(obj);
-        }
-    }
-    group.position.x = -(separationMultiplier * (amount - 1)) / 2;
-    group.position.z = -(separationMultiplier * (amount - 1)) / 2;
-    return group;
-}
-function getSphere(size) {
-    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["SphereGeometry"](size, 24, 24);
-    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshBasicMaterial"]({
-        color: "rgb(120,120,120)"
-    });
-    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
-    return mesh;
-}
-function getPlane(size) {
-    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["PlaneGeometry"](size, size);
-    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
-        color: "rgb(255, 255, 255)",
-        side: __WEBPACK_IMPORTED_MODULE_0_three__["DoubleSide"]
-    });
-    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
-    mesh.receiveShadow = true;
-    return mesh;
-}
-function getPointLight(intensity) {
-    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, intensity);
-    light.castShadow = true;
-    return light;
-}
-function getSpotLight(intensity) {
-    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["SpotLight"](0xffffff, intensity);
-    light.castShadow = true;
-    return light;
-}
-function getDirectionalLight(intensity) {
-    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["DirectionalLight"](0xffffff, intensity);
-    light.castShadow = true;
-    light.shadow.camera.top = 10; //adjust the size of the camera so we get all the shadows
-    light.shadow.camera.right = 10;
-    light.shadow.camera.left = -10;
-    light.shadow.camera.bottom = -10;
-    return light;
-}
 function update(renderer, scene, camera, clock) {
     renderer.render(scene, camera);
     let timeElapsed = clock.getElapsedTime();
-    scene.getChildByName('boxGrid').children.forEach((child, index) => {
+    scene.getObjectByName('boxGrid').children.forEach((child, index) => {
         child.scale.y = ((Math.sin(timeElapsed * 4 + index) + 1) / 2) + 0.001;
         child.position.y = child.scale.y / 2;
     });
@@ -47267,6 +47201,105 @@ module.exports = function( THREE ) {
 	return OrbitControls;
 };
 
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export getBox */
+/* harmony export (immutable) */ __webpack_exports__["a"] = getBoxGrid;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getSphere;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getPlane;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(1);
+
+function getBox(w, h, d) {
+    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](w, h, d);
+    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
+        color: "rgb(120,120,120)"
+    });
+    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
+    mesh.castShadow = true;
+    return mesh;
+}
+function getBoxGrid(amount, separationMultiplier) {
+    const group = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
+    const boxSize = separationMultiplier / 1.2;
+    for (let i = 0; i < amount; i++) {
+        let obj = getBox(boxSize, boxSize, boxSize);
+        obj.position.x = i * separationMultiplier;
+        obj.position.y = obj.geometry.parameters.height / 2;
+        group.add(obj);
+        for (let j = 1; j < amount; j++) {
+            let obj = getBox(boxSize, boxSize, boxSize);
+            obj.position.x = i * separationMultiplier;
+            obj.position.y = obj.geometry.parameters.height / 2;
+            obj.position.z = j * separationMultiplier;
+            group.add(obj);
+        }
+    }
+    group.position.x = -(separationMultiplier * (amount - 1)) / 2;
+    group.position.z = -(separationMultiplier * (amount - 1)) / 2;
+    return group;
+}
+function getSphere(size) {
+    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["SphereGeometry"](size, 24, 24);
+    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshBasicMaterial"]({
+        color: "rgb(120,120,120)"
+    });
+    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
+    return mesh;
+}
+function getPlane(size) {
+    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["PlaneGeometry"](size, size);
+    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
+        color: "rgb(255, 255, 255)",
+        side: __WEBPACK_IMPORTED_MODULE_0_three__["DoubleSide"]
+    });
+    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
+    mesh.receiveShadow = true;
+    return mesh;
+}
+//# sourceMappingURL=geometry.js.map
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = getPointLight;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getSpotLight;
+/* harmony export (immutable) */ __webpack_exports__["a"] = getDirectionalLight;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__geometry__ = __webpack_require__(3);
+
+
+function getPointLight(intensity) {
+    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, intensity);
+    light.castShadow = true;
+    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
+    light.add(sphere);
+    return light;
+}
+function getSpotLight(intensity) {
+    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["SpotLight"](0xffffff, intensity);
+    light.castShadow = true;
+    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
+    light.add(sphere);
+    return light;
+}
+function getDirectionalLight(intensity) {
+    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["DirectionalLight"](0xffffff, intensity);
+    light.castShadow = true;
+    light.shadow.camera.top = 10; //adjust the size of the camera so we get all the shadows
+    light.shadow.camera.right = 10;
+    light.shadow.camera.left = -10;
+    light.shadow.camera.bottom = -10;
+    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
+    light.add(sphere);
+    return light;
+}
+//# sourceMappingURL=lights.js.map
 
 /***/ })
 /******/ ]);

@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import * as GEOMETRY from './geometry';
+import * as LIGHTS from './lights';
 import OrbitControlsfunc from 'three-orbit-controls';
 const OrbitControl = OrbitControlsfunc(THREE);
 const gui = new dat.GUI();
@@ -6,27 +8,25 @@ function init() {
     const scene = new THREE.Scene();
     const clock = new THREE.Clock();
     // BOX
-    const boxGrid = getBoxGrid(20, 0.75);
+    const boxGrid = GEOMETRY.getBoxGrid(20, 0.75);
     boxGrid.name = 'boxGrid';
     // PLANE
-    const plane = getPlane(20);
+    const plane = GEOMETRY.getPlane(20);
     plane.name = 'plane-1'; // naming of objects
     plane.rotation.x = Math.PI / 2; // 90 degrees in radiants
     // LIGHT
-    const pointLight = getPointLight(1);
+    const pointLight = LIGHTS.getPointLight(1);
     pointLight.position.y = 2; // move the light away from (0,0)
     pointLight.name = 'pointLight1';
-    const sphere = getSphere(0.15);
     pointLight.intensity = 3;
-    const spotLight = getSpotLight(1);
+    const spotLight = LIGHTS.getSpotLight(1);
     spotLight.position.y = 2; // move the light away from (0,0)
     spotLight.name = 'spotlight2';
-    const sphereSpot = getSphere(0.15);
     spotLight.intensity = 3;
-    const directionalLight = getDirectionalLight(1);
+    const directionalLight = LIGHTS.getDirectionalLight(1);
     directionalLight.position.y = 2; // move the light away from (0,0)
     directionalLight.name = 'spotlights';
-    const sphereDirectional = getSphere(0.15);
+    // const sphereDirectional = GEOMETRY.getSphere(0.15);
     directionalLight.intensity = 3;
     const helper = new THREE.CameraHelper(directionalLight.shadow.camera);
     // ADD TO SCENE
@@ -35,18 +35,16 @@ function init() {
     scene.add(spotLight);
     scene.add(directionalLight);
     scene.add(boxGrid);
-    pointLight.add(sphere); // add a sphere to the light to be able to see the lights position
-    spotLight.add(sphereSpot); // add a sphere to the light to be able to see the lights position
     scene.add(helper);
     gui.remember(pointLight);
     gui.remember(pointLight.position);
+    gui.remember(pointLight.visible);
     const pointLightFolder = gui.addFolder('PointLight');
     pointLightFolder.add(pointLight, 'intensity', 0, 10);
     pointLightFolder.add(pointLight.position, 'y', 0, 5);
     pointLightFolder.add(pointLight.position, 'x', 0, 5);
     pointLightFolder.add(pointLight.position, 'z', 0, 5);
     pointLightFolder.add(pointLight, 'visible');
-    gui.remember(pointLight.visible);
     gui.remember(spotLight);
     gui.remember(spotLight.position);
     gui.remember(spotLight.shadow);
@@ -96,76 +94,10 @@ function init() {
     //
     update(renderer, scene, camera, clock);
 }
-function getBox(w, h, d) {
-    const geometry = new THREE.BoxGeometry(w, h, d);
-    const material = new THREE.MeshPhongMaterial({
-        color: "rgb(120,120,120)"
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.castShadow = true;
-    return mesh;
-}
-function getBoxGrid(amount, separationMultiplier) {
-    const group = new THREE.Group();
-    const boxSize = separationMultiplier / 1.2;
-    for (let i = 0; i < amount; i++) {
-        let obj = getBox(boxSize, boxSize, boxSize);
-        obj.position.x = i * separationMultiplier;
-        obj.position.y = obj.geometry.parameters.height / 2;
-        group.add(obj);
-        for (let j = 1; j < amount; j++) {
-            let obj = getBox(boxSize, boxSize, boxSize);
-            obj.position.x = i * separationMultiplier;
-            obj.position.y = obj.geometry.parameters.height / 2;
-            obj.position.z = j * separationMultiplier;
-            group.add(obj);
-        }
-    }
-    group.position.x = -(separationMultiplier * (amount - 1)) / 2;
-    group.position.z = -(separationMultiplier * (amount - 1)) / 2;
-    return group;
-}
-function getSphere(size) {
-    const geometry = new THREE.SphereGeometry(size, 24, 24);
-    const material = new THREE.MeshBasicMaterial({
-        color: "rgb(120,120,120)"
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    return mesh;
-}
-function getPlane(size) {
-    const geometry = new THREE.PlaneGeometry(size, size);
-    const material = new THREE.MeshPhongMaterial({
-        color: "rgb(255, 255, 255)",
-        side: THREE.DoubleSide
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.receiveShadow = true;
-    return mesh;
-}
-function getPointLight(intensity) {
-    const light = new THREE.PointLight(0xffffff, intensity);
-    light.castShadow = true;
-    return light;
-}
-function getSpotLight(intensity) {
-    const light = new THREE.SpotLight(0xffffff, intensity);
-    light.castShadow = true;
-    return light;
-}
-function getDirectionalLight(intensity) {
-    const light = new THREE.DirectionalLight(0xffffff, intensity);
-    light.castShadow = true;
-    light.shadow.camera.top = 10; //adjust the size of the camera so we get all the shadows
-    light.shadow.camera.right = 10;
-    light.shadow.camera.left = -10;
-    light.shadow.camera.bottom = -10;
-    return light;
-}
 function update(renderer, scene, camera, clock) {
     renderer.render(scene, camera);
     let timeElapsed = clock.getElapsedTime();
-    scene.getChildByName('boxGrid').children.forEach((child, index) => {
+    scene.getObjectByName('boxGrid').children.forEach((child, index) => {
         child.scale.y = ((Math.sin(timeElapsed * 4 + index) + 1) / 2) + 0.001;
         child.position.y = child.scale.y / 2;
     });
