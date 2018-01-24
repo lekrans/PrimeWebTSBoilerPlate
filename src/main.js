@@ -27,15 +27,61 @@ function init() {
     directionalLight.position.y = 2; // move the light away from (0,0)
     directionalLight.name = 'spotlights';
     // const sphereDirectional = GEOMETRY.getSphere(0.15);
-    directionalLight.intensity = 3;
-    const helper = new THREE.CameraHelper(directionalLight.shadow.camera);
-    // ADD TO SCENE
-    scene.add(plane);
-    scene.add(pointLight);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+    scene.add(boxGrid);
     scene.add(spotLight);
     scene.add(directionalLight);
-    scene.add(boxGrid);
-    scene.add(helper);
+    scene.add(pointLight);
+    scene.add(plane);
+    // CAMERA
+    // *****  Normal positioning of the camera .. we disable it because we are setting up an animation rig instead
+    //  perspectiveCamera.position.x = 1;
+    //  perspectiveCamera.position.y = 2;
+    //  perspectiveCamera.position.z = 5;
+    //  perspectiveCamera.lookAt(new THREE.Vector3(0,0,0));
+    //  const orthoCamera = new THREE.OrthographicCamera(-15, 15, 15, -15,1, 1000);
+    const cameraZPosition = new THREE.Group();
+    const cameraXRotation = new THREE.Group();
+    const cameraYRotation = new THREE.Group();
+    cameraZPosition.add(camera);
+    cameraXRotation.add(cameraZPosition);
+    cameraYRotation.add(cameraXRotation);
+    scene.add(cameraYRotation);
+    gui.add(cameraZPosition.position, 'z', 0, 100);
+    gui.add(cameraYRotation.rotation, 'y', -Math.PI, Math.PI);
+    gui.add(cameraXRotation.rotation, 'x', -Math.PI, Math.PI);
+    // Renderer
+    const renderer = new THREE.WebGLRenderer();
+    renderer.shadowMap.enabled = true;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('webgl').appendChild(renderer.domElement);
+    let controls = new OrbitControl(camera, renderer.domElement);
+    controls.enabled = true;
+    let cameraPos = {
+        origPosition: {
+            x: 0,
+            y: 0,
+            z: 0
+        },
+        orbitPosition: {
+            x: 0,
+            y: 0,
+            z: 0,
+        }
+    };
+    gui.remember(controls);
+    let guiControl = gui.add(controls, 'enabled');
+    guiControl.onChange((value) => {
+        if (value === true) {
+            camera.lookAt(new THREE.Vector3(cameraPos.origPosition.x, cameraPos.origPosition.y, cameraPos.origPosition.z));
+        }
+        else {
+            cameraPos.orbitPosition.x = camera.position.x;
+            cameraPos.orbitPosition.y = camera.position.y;
+            cameraPos.orbitPosition.z = camera.position.z;
+            camera.lookAt(new THREE.Vector3(cameraPos.origPosition.x, cameraPos.origPosition.y, cameraPos.origPosition.z));
+        }
+    });
     gui.remember(pointLight);
     gui.remember(pointLight.position);
     gui.remember(pointLight.visible);
@@ -72,26 +118,6 @@ function init() {
     directionalLightFolder.add(directionalLight.shadow.camera, 'right', 5, 20).name('cam right');
     directionalLightFolder.add(directionalLight.shadow.camera, 'left', -20, -5).name('cam left');
     directionalLightFolder.add(directionalLight, 'visible', 0, 5);
-    // initialize the box
-    //box.rotation.y = 50; box.rotation.x = 150; box.rotation.z = 50;
-    const perspectiveCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    // Camera
-    perspectiveCamera.position.x = 1;
-    perspectiveCamera.position.y = 2;
-    perspectiveCamera.position.z = 5;
-    perspectiveCamera.lookAt(new THREE.Vector3(0, 0, 0));
-    const orthoCamera = new THREE.OrthographicCamera(-15, 15, 15, -15);
-    let camera = perspectiveCamera;
-    let CameraConfig = function () {
-        this.perspective = 'perspective';
-    };
-    // Renderer
-    const renderer = new THREE.WebGLRenderer();
-    renderer.shadowMap.enabled = true;
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('webgl').appendChild(renderer.domElement);
-    let controls = new OrbitControl(camera, renderer.domElement);
-    //
     update(renderer, scene, camera, clock);
 }
 function update(renderer, scene, camera, clock) {

@@ -60,142 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__geometry__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lights__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_three_orbit_controls__);
-
-
-
-
-const OrbitControl = __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls___default()(__WEBPACK_IMPORTED_MODULE_0_three__);
-const gui = new dat.GUI();
-function init() {
-    const scene = new __WEBPACK_IMPORTED_MODULE_0_three__["Scene"]();
-    const clock = new __WEBPACK_IMPORTED_MODULE_0_three__["Clock"]();
-    // BOX
-    const boxGrid = __WEBPACK_IMPORTED_MODULE_1__geometry__["a" /* getBoxGrid */](20, 0.75);
-    boxGrid.name = 'boxGrid';
-    // PLANE
-    const plane = __WEBPACK_IMPORTED_MODULE_1__geometry__["b" /* getPlane */](20);
-    plane.name = 'plane-1'; // naming of objects
-    plane.rotation.x = Math.PI / 2; // 90 degrees in radiants
-    // LIGHT
-    const pointLight = __WEBPACK_IMPORTED_MODULE_2__lights__["b" /* getPointLight */](1);
-    pointLight.position.y = 2; // move the light away from (0,0)
-    pointLight.name = 'pointLight1';
-    pointLight.intensity = 3;
-    const spotLight = __WEBPACK_IMPORTED_MODULE_2__lights__["c" /* getSpotLight */](1);
-    spotLight.position.y = 2; // move the light away from (0,0)
-    spotLight.name = 'spotlight2';
-    spotLight.intensity = 3;
-    const directionalLight = __WEBPACK_IMPORTED_MODULE_2__lights__["a" /* getDirectionalLight */](1);
-    directionalLight.position.y = 2; // move the light away from (0,0)
-    directionalLight.name = 'spotlights';
-    // const sphereDirectional = GEOMETRY.getSphere(0.15);
-    directionalLight.intensity = 3;
-    const helper = new __WEBPACK_IMPORTED_MODULE_0_three__["CameraHelper"](directionalLight.shadow.camera);
-    // ADD TO SCENE
-    scene.add(plane);
-    scene.add(pointLight);
-    scene.add(spotLight);
-    scene.add(directionalLight);
-    scene.add(boxGrid);
-    scene.add(helper);
-    gui.remember(pointLight);
-    gui.remember(pointLight.position);
-    gui.remember(pointLight.visible);
-    const pointLightFolder = gui.addFolder('PointLight');
-    pointLightFolder.add(pointLight, 'intensity', 0, 10);
-    pointLightFolder.add(pointLight.position, 'y', 0, 5);
-    pointLightFolder.add(pointLight.position, 'x', 0, 5);
-    pointLightFolder.add(pointLight.position, 'z', 0, 5);
-    pointLightFolder.add(pointLight, 'visible');
-    gui.remember(spotLight);
-    gui.remember(spotLight.position);
-    gui.remember(spotLight.shadow);
-    gui.remember(spotLight.shadow.mapSize);
-    const spotLightFolder = gui.addFolder('SpotLight');
-    spotLightFolder.add(spotLight, 'intensity', 0, 5);
-    spotLightFolder.add(spotLight.position, 'x', 0, 10);
-    spotLightFolder.add(spotLight.position, 'y', 0, 5);
-    spotLightFolder.add(spotLight.position, 'z', 0, 5);
-    spotLightFolder.add(spotLight, 'penumbra', 0, 5);
-    spotLightFolder.add(spotLight.shadow, 'bias', 0.001, 0.1); // removes the artifact around the edges on the boxes
-    spotLightFolder.add(spotLight.shadow.mapSize, 'width', 0, 40096, 1024); // removes the artifact around the edges on the boxes
-    spotLightFolder.add(spotLight.shadow.mapSize, 'height', 0, 40096, 1024); // removes the artifact around the edges on the boxes
-    spotLightFolder.add(spotLight, 'visible', 0, 5);
-    gui.remember(directionalLight);
-    gui.remember(directionalLight.position);
-    gui.remember(directionalLight.shadow.camera);
-    const directionalLightFolder = gui.addFolder('DirectionalLight');
-    directionalLightFolder.add(directionalLight, 'intensity', 0, 5);
-    directionalLightFolder.add(directionalLight.position, 'x', 0, 5);
-    directionalLightFolder.add(directionalLight.position, 'y', 0, 5);
-    directionalLightFolder.add(directionalLight.position, 'z', 0, 5);
-    directionalLightFolder.add(directionalLight.shadow.camera, 'top', 5, 20);
-    directionalLightFolder.add(directionalLight.shadow.camera, 'bottom', -20, -5).name('cam bottom');
-    directionalLightFolder.add(directionalLight.shadow.camera, 'right', 5, 20).name('cam right');
-    directionalLightFolder.add(directionalLight.shadow.camera, 'left', -20, -5).name('cam left');
-    directionalLightFolder.add(directionalLight, 'visible', 0, 5);
-    // initialize the box
-    //box.rotation.y = 50; box.rotation.x = 150; box.rotation.z = 50;
-    const perspectiveCamera = new __WEBPACK_IMPORTED_MODULE_0_three__["PerspectiveCamera"](45, window.innerWidth / window.innerHeight, 1, 1000);
-    // Camera
-    perspectiveCamera.position.x = 1;
-    perspectiveCamera.position.y = 2;
-    perspectiveCamera.position.z = 5;
-    perspectiveCamera.lookAt(new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](0, 0, 0));
-    const orthoCamera = new __WEBPACK_IMPORTED_MODULE_0_three__["OrthographicCamera"](-15, 15, 15, -15);
-    let camera = perspectiveCamera;
-    let CameraConfig = function () {
-        this.perspective = 'perspective';
-    };
-    // Renderer
-    const renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["WebGLRenderer"]();
-    renderer.shadowMap.enabled = true;
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('webgl').appendChild(renderer.domElement);
-    let controls = new OrbitControl(camera, renderer.domElement);
-    //
-    update(renderer, scene, camera, clock);
-}
-function update(renderer, scene, camera, clock) {
-    renderer.render(scene, camera);
-    let timeElapsed = clock.getElapsedTime();
-    scene.getObjectByName('boxGrid').children.forEach((child, index) => {
-        child.scale.y = ((Math.sin(timeElapsed * 4 + index) + 1) / 2) + 0.001;
-        child.position.y = child.scale.y / 2;
-    });
-    //const pLight = scene.getObjectByName('pointLight1');
-    //  pLight.position.x += 0.01;
-    //  pLight.position.y -= 0.01;
-    //  pLight.position.z += 0.01;
-    //const plane = scene.getObjectByName('plane-1');
-    //plane.rotation.y += 0.01;
-    // plane.rotation.z += 0.01;
-    // scene.traverse((child) => {  // method that applies a function on an object AND it's children
-    //   child.scale.x += 0.001;
-    // })
-    requestAnimationFrame(() => {
-        update(renderer, scene, camera, clock);
-    });
-}
-init();
-//# sourceMappingURL=main.js.map
-
-/***/ }),
-/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46177,7 +46046,263 @@ function CanvasRenderer() {
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export getBox */
+/* harmony export (immutable) */ __webpack_exports__["a"] = getBoxGrid;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getSphere;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getPlane;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
+
+function getBox(w, h, d) {
+    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](w, h, d);
+    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
+        color: "rgb(120,120,120)"
+    });
+    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
+    mesh.castShadow = true;
+    return mesh;
+}
+function getBoxGrid(amount, separationMultiplier) {
+    const group = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
+    const boxSize = separationMultiplier / 1.2;
+    for (let i = 0; i < amount; i++) {
+        let obj = getBox(boxSize, boxSize, boxSize);
+        obj.position.x = i * separationMultiplier;
+        obj.position.y = obj.geometry.parameters.height / 2;
+        group.add(obj);
+        for (let j = 1; j < amount; j++) {
+            let obj = getBox(boxSize, boxSize, boxSize);
+            obj.position.x = i * separationMultiplier;
+            obj.position.y = obj.geometry.parameters.height / 2;
+            obj.position.z = j * separationMultiplier;
+            group.add(obj);
+        }
+    }
+    group.position.x = -(separationMultiplier * (amount - 1)) / 2;
+    group.position.z = -(separationMultiplier * (amount - 1)) / 2;
+    return group;
+}
+function getSphere(size) {
+    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["SphereGeometry"](size, 24, 24);
+    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshBasicMaterial"]({
+        color: "rgb(120,120,120)"
+    });
+    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
+    return mesh;
+}
+function getPlane(size) {
+    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["PlaneGeometry"](size, size);
+    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
+        color: "rgb(255, 255, 255)",
+        side: __WEBPACK_IMPORTED_MODULE_0_three__["DoubleSide"]
+    });
+    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
+    mesh.receiveShadow = true;
+    return mesh;
+}
+//# sourceMappingURL=geometry.js.map
+
+/***/ }),
 /* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__geometry__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lights__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_three_orbit_controls__);
+
+
+
+
+const OrbitControl = __WEBPACK_IMPORTED_MODULE_3_three_orbit_controls___default()(__WEBPACK_IMPORTED_MODULE_0_three__);
+const gui = new dat.GUI();
+function init() {
+    const scene = new __WEBPACK_IMPORTED_MODULE_0_three__["Scene"]();
+    const clock = new __WEBPACK_IMPORTED_MODULE_0_three__["Clock"]();
+    // BOX
+    const boxGrid = __WEBPACK_IMPORTED_MODULE_1__geometry__["a" /* getBoxGrid */](20, 0.75);
+    boxGrid.name = 'boxGrid';
+    // PLANE
+    const plane = __WEBPACK_IMPORTED_MODULE_1__geometry__["b" /* getPlane */](20);
+    plane.name = 'plane-1'; // naming of objects
+    plane.rotation.x = Math.PI / 2; // 90 degrees in radiants
+    // LIGHT
+    const pointLight = __WEBPACK_IMPORTED_MODULE_2__lights__["b" /* getPointLight */](1);
+    pointLight.position.y = 2; // move the light away from (0,0)
+    pointLight.name = 'pointLight1';
+    pointLight.intensity = 3;
+    const spotLight = __WEBPACK_IMPORTED_MODULE_2__lights__["c" /* getSpotLight */](1);
+    spotLight.position.y = 2; // move the light away from (0,0)
+    spotLight.name = 'spotlight2';
+    spotLight.intensity = 3;
+    const directionalLight = __WEBPACK_IMPORTED_MODULE_2__lights__["a" /* getDirectionalLight */](1);
+    directionalLight.position.y = 2; // move the light away from (0,0)
+    directionalLight.name = 'spotlights';
+    // const sphereDirectional = GEOMETRY.getSphere(0.15);
+    const camera = new __WEBPACK_IMPORTED_MODULE_0_three__["PerspectiveCamera"](45, window.innerWidth / window.innerHeight, 1, 1000);
+    scene.add(boxGrid);
+    scene.add(spotLight);
+    scene.add(directionalLight);
+    scene.add(pointLight);
+    scene.add(plane);
+    // CAMERA
+    // *****  Normal positioning of the camera .. we disable it because we are setting up an animation rig instead
+    //  perspectiveCamera.position.x = 1;
+    //  perspectiveCamera.position.y = 2;
+    //  perspectiveCamera.position.z = 5;
+    //  perspectiveCamera.lookAt(new THREE.Vector3(0,0,0));
+    //  const orthoCamera = new THREE.OrthographicCamera(-15, 15, 15, -15,1, 1000);
+    const cameraZPosition = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
+    const cameraXRotation = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
+    const cameraYRotation = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
+    cameraZPosition.add(camera);
+    cameraXRotation.add(cameraZPosition);
+    cameraYRotation.add(cameraXRotation);
+    scene.add(cameraYRotation);
+    gui.add(cameraZPosition.position, 'z', 0, 100);
+    gui.add(cameraYRotation.rotation, 'y', -Math.PI, Math.PI);
+    gui.add(cameraXRotation.rotation, 'x', -Math.PI, Math.PI);
+    // Renderer
+    const renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["WebGLRenderer"]();
+    renderer.shadowMap.enabled = true;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('webgl').appendChild(renderer.domElement);
+    let controls = new OrbitControl(camera, renderer.domElement);
+    controls.enabled = true;
+    let cameraPos = {
+        origPosition: {
+            x: 0,
+            y: 0,
+            z: 0
+        },
+        orbitPosition: {
+            x: 0,
+            y: 0,
+            z: 0,
+        }
+    };
+    gui.remember(controls);
+    let guiControl = gui.add(controls, 'enabled');
+    guiControl.onChange((value) => {
+        if (value === true) {
+            camera.lookAt(new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](cameraPos.origPosition.x, cameraPos.origPosition.y, cameraPos.origPosition.z));
+        }
+        else {
+            cameraPos.orbitPosition.x = camera.position.x;
+            cameraPos.orbitPosition.y = camera.position.y;
+            cameraPos.orbitPosition.z = camera.position.z;
+            camera.lookAt(new __WEBPACK_IMPORTED_MODULE_0_three__["Vector3"](cameraPos.origPosition.x, cameraPos.origPosition.y, cameraPos.origPosition.z));
+        }
+    });
+    gui.remember(pointLight);
+    gui.remember(pointLight.position);
+    gui.remember(pointLight.visible);
+    const pointLightFolder = gui.addFolder('PointLight');
+    pointLightFolder.add(pointLight, 'intensity', 0, 10);
+    pointLightFolder.add(pointLight.position, 'y', 0, 5);
+    pointLightFolder.add(pointLight.position, 'x', 0, 5);
+    pointLightFolder.add(pointLight.position, 'z', 0, 5);
+    pointLightFolder.add(pointLight, 'visible');
+    gui.remember(spotLight);
+    gui.remember(spotLight.position);
+    gui.remember(spotLight.shadow);
+    gui.remember(spotLight.shadow.mapSize);
+    const spotLightFolder = gui.addFolder('SpotLight');
+    spotLightFolder.add(spotLight, 'intensity', 0, 5);
+    spotLightFolder.add(spotLight.position, 'x', 0, 10);
+    spotLightFolder.add(spotLight.position, 'y', 0, 5);
+    spotLightFolder.add(spotLight.position, 'z', 0, 5);
+    spotLightFolder.add(spotLight, 'penumbra', 0, 5);
+    spotLightFolder.add(spotLight.shadow, 'bias', 0.001, 0.1); // removes the artifact around the edges on the boxes
+    spotLightFolder.add(spotLight.shadow.mapSize, 'width', 0, 40096, 1024); // removes the artifact around the edges on the boxes
+    spotLightFolder.add(spotLight.shadow.mapSize, 'height', 0, 40096, 1024); // removes the artifact around the edges on the boxes
+    spotLightFolder.add(spotLight, 'visible', 0, 5);
+    gui.remember(directionalLight);
+    gui.remember(directionalLight.position);
+    gui.remember(directionalLight.shadow.camera);
+    const directionalLightFolder = gui.addFolder('DirectionalLight');
+    directionalLightFolder.add(directionalLight, 'intensity', 0, 5);
+    directionalLightFolder.add(directionalLight.position, 'x', 0, 5);
+    directionalLightFolder.add(directionalLight.position, 'y', 0, 5);
+    directionalLightFolder.add(directionalLight.position, 'z', 0, 5);
+    directionalLightFolder.add(directionalLight.shadow.camera, 'top', 5, 20);
+    directionalLightFolder.add(directionalLight.shadow.camera, 'bottom', -20, -5).name('cam bottom');
+    directionalLightFolder.add(directionalLight.shadow.camera, 'right', 5, 20).name('cam right');
+    directionalLightFolder.add(directionalLight.shadow.camera, 'left', -20, -5).name('cam left');
+    directionalLightFolder.add(directionalLight, 'visible', 0, 5);
+    update(renderer, scene, camera, clock);
+}
+function update(renderer, scene, camera, clock) {
+    renderer.render(scene, camera);
+    let timeElapsed = clock.getElapsedTime();
+    scene.getObjectByName('boxGrid').children.forEach((child, index) => {
+        child.scale.y = ((Math.sin(timeElapsed * 4 + index) + 1) / 2) + 0.001;
+        child.position.y = child.scale.y / 2;
+    });
+    //const pLight = scene.getObjectByName('pointLight1');
+    //  pLight.position.x += 0.01;
+    //  pLight.position.y -= 0.01;
+    //  pLight.position.z += 0.01;
+    //const plane = scene.getObjectByName('plane-1');
+    //plane.rotation.y += 0.01;
+    // plane.rotation.z += 0.01;
+    // scene.traverse((child) => {  // method that applies a function on an object AND it's children
+    //   child.scale.x += 0.001;
+    // })
+    requestAnimationFrame(() => {
+        update(renderer, scene, camera, clock);
+    });
+}
+init();
+//# sourceMappingURL=main.js.map
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = getPointLight;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getSpotLight;
+/* harmony export (immutable) */ __webpack_exports__["a"] = getDirectionalLight;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__geometry__ = __webpack_require__(1);
+
+
+function getPointLight(intensity) {
+    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, intensity);
+    light.castShadow = true;
+    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
+    light.add(sphere);
+    return light;
+}
+function getSpotLight(intensity) {
+    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["SpotLight"](0xffffff, intensity);
+    light.castShadow = true;
+    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
+    light.add(sphere);
+    return light;
+}
+function getDirectionalLight(intensity) {
+    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["DirectionalLight"](0xffffff, intensity);
+    light.castShadow = true;
+    light.shadow.camera.top = 10; //adjust the size of the camera so we get all the shadows
+    light.shadow.camera.right = 10;
+    light.shadow.camera.left = -10;
+    light.shadow.camera.bottom = -10;
+    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
+    light.add(sphere);
+    return light;
+}
+//# sourceMappingURL=lights.js.map
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = function( THREE ) {
@@ -47201,105 +47326,6 @@ module.exports = function( THREE ) {
 	return OrbitControls;
 };
 
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export getBox */
-/* harmony export (immutable) */ __webpack_exports__["a"] = getBoxGrid;
-/* harmony export (immutable) */ __webpack_exports__["c"] = getSphere;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getPlane;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(1);
-
-function getBox(w, h, d) {
-    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["BoxGeometry"](w, h, d);
-    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
-        color: "rgb(120,120,120)"
-    });
-    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
-    mesh.castShadow = true;
-    return mesh;
-}
-function getBoxGrid(amount, separationMultiplier) {
-    const group = new __WEBPACK_IMPORTED_MODULE_0_three__["Group"]();
-    const boxSize = separationMultiplier / 1.2;
-    for (let i = 0; i < amount; i++) {
-        let obj = getBox(boxSize, boxSize, boxSize);
-        obj.position.x = i * separationMultiplier;
-        obj.position.y = obj.geometry.parameters.height / 2;
-        group.add(obj);
-        for (let j = 1; j < amount; j++) {
-            let obj = getBox(boxSize, boxSize, boxSize);
-            obj.position.x = i * separationMultiplier;
-            obj.position.y = obj.geometry.parameters.height / 2;
-            obj.position.z = j * separationMultiplier;
-            group.add(obj);
-        }
-    }
-    group.position.x = -(separationMultiplier * (amount - 1)) / 2;
-    group.position.z = -(separationMultiplier * (amount - 1)) / 2;
-    return group;
-}
-function getSphere(size) {
-    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["SphereGeometry"](size, 24, 24);
-    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshBasicMaterial"]({
-        color: "rgb(120,120,120)"
-    });
-    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
-    return mesh;
-}
-function getPlane(size) {
-    const geometry = new __WEBPACK_IMPORTED_MODULE_0_three__["PlaneGeometry"](size, size);
-    const material = new __WEBPACK_IMPORTED_MODULE_0_three__["MeshPhongMaterial"]({
-        color: "rgb(255, 255, 255)",
-        side: __WEBPACK_IMPORTED_MODULE_0_three__["DoubleSide"]
-    });
-    const mesh = new __WEBPACK_IMPORTED_MODULE_0_three__["Mesh"](geometry, material);
-    mesh.receiveShadow = true;
-    return mesh;
-}
-//# sourceMappingURL=geometry.js.map
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = getPointLight;
-/* harmony export (immutable) */ __webpack_exports__["c"] = getSpotLight;
-/* harmony export (immutable) */ __webpack_exports__["a"] = getDirectionalLight;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_three__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__geometry__ = __webpack_require__(3);
-
-
-function getPointLight(intensity) {
-    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["PointLight"](0xffffff, intensity);
-    light.castShadow = true;
-    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
-    light.add(sphere);
-    return light;
-}
-function getSpotLight(intensity) {
-    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["SpotLight"](0xffffff, intensity);
-    light.castShadow = true;
-    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
-    light.add(sphere);
-    return light;
-}
-function getDirectionalLight(intensity) {
-    const light = new __WEBPACK_IMPORTED_MODULE_0_three__["DirectionalLight"](0xffffff, intensity);
-    light.castShadow = true;
-    light.shadow.camera.top = 10; //adjust the size of the camera so we get all the shadows
-    light.shadow.camera.right = 10;
-    light.shadow.camera.left = -10;
-    light.shadow.camera.bottom = -10;
-    const sphere = __WEBPACK_IMPORTED_MODULE_1__geometry__["c" /* getSphere */](0.15);
-    light.add(sphere);
-    return light;
-}
-//# sourceMappingURL=lights.js.map
 
 /***/ })
 /******/ ]);
