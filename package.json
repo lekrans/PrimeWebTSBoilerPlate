@@ -6,9 +6,11 @@
   "dependencies": {},
   "devDependencies": {
     "@types/three": "^0.89.3",
+    "@types/tween.js": "^16.9.0",
     "npm-run-all": "^4.1.2",
     "three": "^0.89.0",
     "three-orbit-controls": "^82.1.0",
+    "tween.js": "^16.6.0",
     "typescript": "^2.6.2",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1"

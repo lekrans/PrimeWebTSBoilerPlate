@@ -1,10 +1,13 @@
 import * as THREE from 'three';
+import * as TWEEN from 'tween.js'
+
 import * as GEOMETRY from './geometry';
 import * as LIGHTS from './lights';
 
 import OrbitControlsfunc from 'three-orbit-controls';
 import { DirectionalLight, Clock, PerspectiveCamera, OrthographicCamera } from 'three';
 const OrbitControl = OrbitControlsfunc(THREE);
+
 
 const gui = new dat.GUI();
 
@@ -60,17 +63,53 @@ function init() {
 //  const orthoCamera = new THREE.OrthographicCamera(-15, 15, 15, -15,1, 1000);
 
 
+// *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+// ANIMATION RIG...
+// note how the groups are nested
+//  cameraYRotation(group)
+//     [_cameraXRotation(group)
+//        [_cameraZPosition(group) .. not that this group is POSITION
+//
+// this will DISABLE the orbitController
 
+  const cameraZRotation = new THREE.Group();
   const cameraZPosition = new THREE.Group();
+  const cameraYPosition = new THREE.Group();
   const cameraXRotation = new THREE.Group();
   const cameraYRotation = new THREE.Group();
-  cameraZPosition.add(camera);
+
+  cameraZRotation.name = 'cameraZRotation';
+  cameraZPosition.name = 'cameraZPosition';
+  cameraYPosition.name = 'cameraYPosition';
+  cameraXRotation.name = 'cameraXRotation';
+  cameraYRotation.name = 'cameraYRotation';
+
+  cameraZRotation.add(camera);
+  cameraYPosition.add(cameraZRotation);
+  cameraZPosition.add(cameraYPosition);
   cameraXRotation.add(cameraZPosition);
   cameraYRotation.add(cameraXRotation);
+
   scene.add(cameraYRotation);
+
+  cameraZPosition.position.z = 100;
+  cameraZPosition.position.y = 1;
+
+  new TWEEN.Tween({ val: 100 })
+    .to({ val: -50 }, 12000)
+    .onUpdate(function(){
+      cameraZPosition.position.z = this.val;
+    })
+    .start();
   gui.add(cameraZPosition.position, 'z', 0, 100);
+  gui.add(cameraYPosition.position, 'y', 0, 100);
+  gui.add(cameraZRotation.rotation, 'z', -Math.PI, Math.PI);
   gui.add(cameraYRotation.rotation, 'y', -Math.PI, Math.PI);
   gui.add(cameraXRotation.rotation, 'x', -Math.PI, Math.PI);
+
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+
 
   // Renderer
  const renderer = new THREE.WebGLRenderer();
@@ -153,23 +192,46 @@ function update(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE
    camera
  );
 
- let timeElapsed = clock.getElapsedTime();
- scene.getObjectByName('boxGrid').children.forEach((child, index) => {
-   child.scale.y = ((Math.sin(timeElapsed * 4 + index) + 1)/2) + 0.001;
-   child.position.y = child.scale.y/2;
- })
- //const pLight = scene.getObjectByName('pointLight1');
-//  pLight.position.x += 0.01;
-//  pLight.position.y -= 0.01;
-//  pLight.position.z += 0.01;
- //const plane = scene.getObjectByName('plane-1');
- //plane.rotation.y += 0.01;
- // plane.rotation.z += 0.01;
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+// BOX ANIMATIONS
+// Animate the boxes y value by applying Math.sin on a timeValue and offset it by the childs index
+//   to make them offseted to each other
+// clock: THREE.Clock()
+// ANIM_SPEED: constant to change the speed of the box height animation
+
+  let timeElapsed = clock.getElapsedTime();
+  const ANIM_SPEED = 4;
+  scene.getObjectByName('boxGrid').children.forEach((child, index) => {
+    child.scale.y = ((Math.sin(timeElapsed * ANIM_SPEED + index) + 1) / 2) + 0.001;
+    child.position.y = child.scale.y / 2;
+  })
+
+  TWEEN.update();
+    //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    // Another way to TRAVERSE
+    //        scene.traverse((child) => {  // method that applies a function on an object AND it's children
+    //          child.scale.x += 0.001;
+    //         })
+    //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
 
- // scene.traverse((child) => {  // method that applies a function on an object AND it's children
- //   child.scale.x += 0.001;
- // })
+    //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    // WIGGLE EFFECT
+    //   Created by the use of the noicejs effect (github.com/josephg/noicejs)
+    //   Here it is located in the dist folder and referenced by the index.html
+    //   we use the simplex2 algorithm that takes two continous values (like our timeElapsed variable);
+  const cameraZ = scene.getObjectByName('cameraZPosition');
+ // cameraZ.position.z -= 0.25;
+
+  const WIGGLE_SPEED = 1.5;
+  const WIGGLE_AMOUNT = 0.02;
+  const cameraZRot = scene.getObjectByName('cameraZRotation');
+
+  cameraZRot.rotation.z = noise.simplex2(timeElapsed * WIGGLE_SPEED, timeElapsed * WIGGLE_SPEED) * WIGGLE_AMOUNT;
+
+  //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+
  requestAnimationFrame(()=>{  // method on the window object that will continously (about 60 times a sec) update the frame/scene
    update(renderer, scene, camera, clock);
  })
